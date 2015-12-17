@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cube</title>
+</head>
+
+<style>
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+    }
+    .arena {
+        height: 100%;
+        -webkit-perspective: 1000px;
+        -webkit-perspective-origin: 50% 50%;
+    }
+    .box {
+        position: absolute;
+        height: 200px;
+        width: 200px;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%,-50%,0);
+        -webkit-transition: -webkit-transform 2s linear;
+        -webkit-transform-style: preserve-3d;
+    }
+    .face {
+        color: #FFF;
+        font-size: 30px;
+        font-weight: bold;
+        position: absolute;
+        background: rgba(3, 169, 244, 0.4);
+        width: 160px;
+        height: 160px;
+        padding: 20px;
+        border: 1px solid #03A9F4;
+    }
+    .face:nth-child(1) {-webkit-transform: translateZ(100px);}
+    .face:nth-child(2) {-webkit-transform: rotateY(90deg) translateZ(100px);}
+    .face:nth-child(3) {-webkit-transform: rotateY(180deg) translateZ(100px);}
+    .face:nth-child(4) {-webkit-transform: rotateY(270deg) translateZ(100px);}
+    .face:nth-child(5) {-webkit-transform: rotateX(90deg) translateZ(100px);}
+    .face:nth-child(6) {-webkit-transform: rotateX(270deg) translateZ(100px);}
+</style>
+
+<body>
+<div class="arena">
+    <div class="box">
+        <div class="face">1</div>
+        <div class="face">2</div>
+        <div class="face">3</div>
+        <div class="face">4</div>
+        <div class="face">5</div>
+        <div class="face">6</div>
+    </div>
+</div>
+</body>
+
+<script>
+    var xAngle = 0, yAngle = 0;
+    var box = document.getElementsByClassName('box')[0];
+    document.addEventListener('keydown', function(e){
+        switch (e.keyCode) {
+            case 65: // left
+                yAngle -= 90;
+                break;
+            case 87: // up
+                xAngle += 90;
+                break;
+            case 68: // right
+                yAngle += 90;
+                break;
+            case 83: // down
+                xAngle -= 90;
+                break;
+        };
+        box.style.webkitTransform = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
+    }, false);
+
+    var disX = disY = 0;                         // 鼠标距离div的左距离和上距离
+
+    // 鼠标按下div1时
+    box.onmousedown = function(e) {
+        var evnt = e || event;                  // 得到鼠标事件
+        disX = evnt.clientX - box.offsetLeft;   // 鼠标横坐标 - div1的left
+        disY = evnt.clientY - box.offsetTop;    // 鼠标纵坐标 - div1的top
+
+        // 鼠标移动时
+        document.onmousemove = function(e) {
+            var evnt = e || event;
+            var x = evnt.clientX - disX;
+            var y = evnt.clientY - disY;
+            var window_width  = document.documentElement.clientWidth  - box.offsetWidth;
+            var window_height = document.documentElement.clientHeight - box.offsetHeight;
+
+            x = ( x < 0 ) ? 0 : x;                          // 当div1到窗口最左边时
+            x = ( x > window_width ) ? window_width : x;    // 当div1到窗口最右边时
+            y = ( y < 0 ) ? 0 : y;                          // 当div1到窗口最上边时
+            y = ( y > window_height ) ? window_height : y;  // 当div1到窗口最下边时
+
+            box.style.left = x + "px";
+            box.style.top  = y + "px";
+        };
+
+        document.onmouseup = function() {
+            document.onmousemove =null;
+            document.onmouup = null;
+        };
+        return false;
+    };
+
+</script>
+</html>
